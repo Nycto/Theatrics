@@ -18,7 +18,7 @@ interface Entity {
 class SpriteEntity implements Entity {
 
     /** The sprite that represents entity */
-    private var sprite(default, null): Sprite;
+    public var sprite(default, null): Sprite;
 
     /** Entity */
     public function new( sprite: Sprite ) {
