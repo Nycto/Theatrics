@@ -15,4 +15,4 @@ before_install:
   - cd $(pwd)/samples/
 
 script:
-  - haxelib run openfl build Tiler/application.xml html5
+  - ls --color=never | xargs -I{} haxelib run openfl build {}/project.xml html5
