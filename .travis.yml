@@ -11,7 +11,7 @@ before_install:
   - haxelib -notimeout install hxcpp
   - haxelib -notimeout install lime
   - haxelib -notimeout install lime-tools
-  - haxelib -notimeout git theatrics https://github.com/Nycto/Theatrics.git
+  - haxelib dev theatrics $(pwd)
   - cd $(pwd)/samples/
 
 script:
