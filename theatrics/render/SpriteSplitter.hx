@@ -22,6 +22,13 @@ class SpriteSplitter<T: EnumValue> {
         this.data = data;
     }
 
+    /** Alternate constructor that loads a sprite from an asset path */
+    public static function load<T> ( path: String ): SpriteSplitter<T> {
+        var data = openfl.Assets.getBitmapData(path);
+        if ( data == null ) throw "Could not load " + path;
+        return new SpriteSplitter<T>(data);
+    }
+
     /** Returns the rectangles for a group */
     private function getRectangles( group: T ): List<Rectangle> {
         var list = groups.get(group);
