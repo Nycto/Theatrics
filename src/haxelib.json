@@ -1,0 +1,12 @@
+{
+    name: "theatrics",
+    version: "1.0.0-Alpha",
+    description: "Utilities for building games in Haxe",
+    url: "https://github.com/Nycto/Theatrics",
+    license: "MIT",
+    tags: [],
+    dependencies: {
+        openfl: ""
+    }
+}
+
