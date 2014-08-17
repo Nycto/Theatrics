@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+
+    <app main="Main" file="Game" />
+
+    <window width="600" height="400" fps="60" background="0x000000" />
+
+    <source path="src" />
+
+    <haxelib name="openfl" />
+    <haxelib name="theatrics" />
+
+    <assets path="assets" />
+
+</project>
