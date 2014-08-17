@@ -58,5 +58,11 @@ class Scene<T: EnumValue> {
         if ( value == null ) throw "Layer does not exist: " + key;
         return value;
     }
+
+    /** Adds an entity to a layer */
+    public function add( layer: T, entity: Entity ): Scene<T> {
+        get(layer).add(entity);
+        return this;
+    }
 }
 
