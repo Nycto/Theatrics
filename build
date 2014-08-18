@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Builds all the sample projects
+#
+
+for dir in $(find samples -mindepth 1 -maxdepth 1); do
+    echo Building $dir;
+    haxelib run openfl build $dir/project.xml html5 || exit 1;
+done

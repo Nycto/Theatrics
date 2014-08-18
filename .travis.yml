@@ -12,7 +12,6 @@ before_install:
   - haxelib -notimeout install lime
   - haxelib -notimeout install lime-tools
   - haxelib dev theatrics $(pwd)
-  - cd $(pwd)/samples/
 
 script:
-  - ls --color=never | xargs -I{} haxelib run openfl build {}/project.xml html5
+  - ./build
