@@ -39,10 +39,10 @@ class SpriteEntity implements Entity {
 
     /** Changes the dimensions of this entity */
     public function dimensions( width: Int, height: Int ): SpriteEntity {
-        trace([ sprite.width, sprite.height ]);
         sprite.width = width;
         sprite.height = height;
         return this;
     }
 }
+
 
