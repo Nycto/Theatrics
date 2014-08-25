@@ -9,6 +9,7 @@ import theatrics.script.Call;
 import theatrics.script.Delay;
 import theatrics.util.Defer;
 import theatrics.util.FrameEnter;
+import theatrics.util.Ease;
 
 
 /** The layers in the scene */
@@ -31,7 +32,7 @@ class Main {
         // Tell the game which scene to use
         game.use(scene);
 
-        var entity = new FillEntity(0x0077ee, 10, 20, 50, 50);
+        var entity = new FillEntity(0x0077ee, 10, 10, 50, 50);
 
         scene.add( Layers.primary, entity );
 
@@ -51,11 +52,11 @@ class Main {
             }),
             sequencer.once([
                 sequencer.range(10, 100, 500, function (offset) {
-                    entity.position( offset, offset * 2);
-                }),
-                sequencer.range(100, 10, 500, function (offset) {
-                    entity.position( offset, offset * 2 );
-                })
+                    entity.position( offset, offset);
+                }, Ease.quadInOut),
+                sequencer.range(100, 10, 1000, function (offset) {
+                    entity.position( offset, offset );
+                }, Ease.elasticInOut)
             ])
         ]).start();
     }

@@ -3,6 +3,7 @@ package theatrics.script;
 import theatrics.script.Scriptable;
 import theatrics.util.FrameEnter;
 import theatrics.util.Defer;
+import theatrics.util.Ease;
 
 /**
  * A sequence execution session
@@ -151,7 +152,11 @@ class Sequencer {
     }
 
     /** Stretches a function call over the given period of time  */
-    public function percent( ms: Int, callback: Float -> Void ): Scriptable {
+    public function percent(
+        ms: Int,
+        callback: Float -> Void,
+        easing: EaseFunction = null
+    ): Scriptable {
         return frame(function(time, done) {
             var percent = time / ms;
             if ( percent >= 1 ) {
@@ -159,7 +164,7 @@ class Sequencer {
                 done();
             }
             else {
-                callback(percent);
+                callback(easing == null ? percent : easing(percent));
             }
         });
     }
@@ -169,12 +174,13 @@ class Sequencer {
         from: Int,
         to: Int,
         ms: Int,
-        callback: Int -> Void
+        callback: Int -> Void,
+        easing: EaseFunction = null
     ): Scriptable {
         var delta = to - from;
         return percent(ms, function(percent) {
             callback( from + Math.round(delta * percent) );
-        });
+        }, easing);
     }
 }
 
