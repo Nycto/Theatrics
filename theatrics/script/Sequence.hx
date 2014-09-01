@@ -1,6 +1,8 @@
 package theatrics.script;
 
+import theatrics.script.EachFrame;
 import theatrics.script.Scriptable;
+import theatrics.script.Call;
 import theatrics.util.FrameEnter;
 import theatrics.util.Defer;
 import theatrics.util.Ease;
@@ -13,11 +15,18 @@ class SequenceRun {
     /** The session configuration */
     private var sequence: Sequence;
 
+    /** The currently running sub-script */
+    private var running: Null<Scripterface> = null;
+
     /** A method to execute on completion */
     private var onComplete: Null<Void -> Void>;
 
     /** The next action to perform when the current action finishes */
     private var next: Int = 0;
+
+    /** The execution controller */
+    @:allow(theatrics.script.Sequence)
+    private var control: Scripterface;
 
     /** Constructor */
     @:allow(theatrics.script.Sequence)
@@ -27,11 +36,20 @@ class SequenceRun {
     ) {
         this.sequence = sequence;
         this.onComplete = onComplete;
+        this.control = new Scripterface(function() {
+            if ( running != null ) {
+                running.stop();
+            }
+        });
         doNext();
     }
 
     /** Executes the next action */
     private function doNext(): Void {
+
+        if ( control.isStopped ) {
+            return;
+        }
 
         var isSpent = next >= sequence.actions.length;
 
@@ -48,7 +66,7 @@ class SequenceRun {
         // If we haven't yet reached the final action
         else if ( !isSpent ) {
             next++;
-            sequence.actions[next - 1].start(function() {
+            this.running = sequence.actions[next - 1].start(function() {
                 this.sequence.defer.run(doNext);
             });
         }
@@ -88,8 +106,10 @@ class Sequence implements Scriptable {
     }
 
     /** {@inheritDoc} */
-    public function start ( onComplete: Null<Void -> Void> = null ): Void {
-        new SequenceRun( this, onComplete );
+    public function start (
+        onComplete: Null<Void -> Void> = null
+    ): Scripterface {
+        return new SequenceRun( this, onComplete ).control;
     }
 }
 
@@ -141,14 +161,7 @@ class Sequencer {
     public function frame(
         callback: Int -> (Void -> Void) -> Void
     ): Scriptable {
-        return new Call(function(next) {
-            frames.register(function(elapsed, cancel) {
-                callback(elapsed, function() {
-                    cancel();
-                    next();
-                });
-            });
-        });
+        return new EachFrame(frames, callback);
     }
 
     /** Stretches a function call over the given period of time  */

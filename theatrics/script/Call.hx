@@ -27,8 +27,16 @@ class Call implements Scriptable {
     }
 
     /** {@inheritDoc} */
-    public function start ( onComplete: Null<Void -> Void> = null ): Void {
-        call( onComplete );
+    public function start (
+        onComplete: Null<Void -> Void> = null
+    ): Scripterface {
+        var control = new Scripterface();
+        call(function () {
+            if ( !control.isStopped ) {
+                onComplete();
+            }
+        });
+        return control;
     }
 }
 

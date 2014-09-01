@@ -32,20 +32,19 @@ class Main {
         // Tell the game which scene to use
         game.use(scene);
 
+        // The animated entity
         var entity = new FillEntity(0x0077ee, 10, 10, 50, 50);
-
         scene.add( Layers.primary, entity );
 
-        var defer = new Defer();
-        var frames = new FrameEnter();
+        // A sequencer builds scriptable objects of different kinds
+        var sequencer = new Sequencer(new FrameEnter(), new Defer());
 
-        var sequencer = new Sequencer(frames, defer);
-
+        // A Scriptable that changes the box to a random color
         var changeColor = Call.build(function() {
             entity.setColor( Math.floor( Math.random() * 0xffffff ) );
         });
 
-        sequencer.loop([
+        var script = sequencer.loop([
             sequencer.repeat(3, [ changeColor, sequencer.delay(250) ]),
             sequencer.percent(500, function (percent) {
                 entity.setColor(0xffff00 + Math.round(percent * 255));
@@ -59,6 +58,13 @@ class Main {
                 }, Ease.elasticInOut)
             ])
         ]).start();
+
+        // Stop button
+        var stop = new FillEntity(0xff0000, 300, 100, 100, 50);
+        scene.add( Layers.primary, stop );
+        stop.onClick(function (_) {
+            script.stop();
+        });
     }
 }
 

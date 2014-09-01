@@ -21,15 +21,22 @@ class Delay implements Scriptable {
     }
 
     /** {@inheritDoc} */
-    public function start ( onComplete: Null<Void -> Void> = null ): Void {
+    public function start (
+        onComplete: Null<Void -> Void> = null
+    ): Scripterface {
+        var control = new Scripterface();
         frames.register(function (elapsed, cancel) {
-            if ( elapsed >= delay ) {
+            if ( control.isStopped ) {
+                cancel();
+            }
+            else if ( elapsed >= delay ) {
                 cancel();
                 if ( onComplete != null ) {
                     onComplete();
                 }
             }
         });
+        return control;
     }
 }
 
