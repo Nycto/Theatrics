@@ -5,6 +5,7 @@ import theatrics.script.Scriptable;
 import theatrics.script.Call;
 import theatrics.script.Interval;
 import theatrics.script.UntilFirst;
+import theatrics.script.UntilAll;
 import theatrics.util.FrameEnter;
 import theatrics.util.Defer;
 import theatrics.util.Ease;
@@ -210,6 +211,11 @@ class Sequencer {
     /** Starts a bunch of actions and waits for the first to finish */
     public function untilFirst( actions: Array<Scriptable> ): Scriptable {
         return new UntilFirst( actions );
+    }
+
+    /** Starts a bunch of actions and waits for them all to finish */
+    public function untilAll( actions: Array<Scriptable> ): Scriptable {
+        return new UntilAll( actions );
     }
 
     /** Runs an animation one time through */

@@ -9,6 +9,7 @@ import theatrics.util.Defer;
 import theatrics.util.FrameEnter;
 import theatrics.util.Ease;
 import theatrics.geom.Direction;
+import theatrics.geom.Dimensions;
 import theatrics.geom.Rectangle;
 
 
@@ -21,6 +22,8 @@ enum Layers {
 enum Actor {
     Walk( dir: Direction );
     Stand( dir: Direction );
+    Slouch( dir: Direction );
+    Crumple( dir: Direction );
 }
 
 class Main {
@@ -48,11 +51,23 @@ class Main {
                 .skipRow().skipRow().skipRow()
                 .addRow( Actor.Walk(Direction.East), 4 )
                 .done()
-                .addManyRows(new Rectangle(5 * 256, 0, 256, 256))
-                .addRow( Actor.Stand(Direction.West), 1 )
-                .skipRow().skipRow().skipRow()
-                .addRow( Actor.Stand(Direction.East), 1 )
-                .asAnimation( 100 );
+                .add(
+                    Actor.Stand(Direction.West),
+                    new Rectangle(5 * 256, 0, 256, 256)
+                )
+                .add(
+                    Actor.Stand(Direction.East),
+                    new Rectangle(5 * 256, 5 * 256, 256, 256)
+                )
+                .add(
+                    Actor.Slouch(Direction.East),
+                    new Rectangle(6 * 256, 5 * 256, 256, 256)
+                )
+                .add(
+                    Actor.Crumple(Direction.East),
+                    new Rectangle(7 * 256, 5 * 256, 256, 256)
+                )
+                .asAnimation( new Dimensions(256, 256), 100 );
 
         // Create an actual entity from the animation
         var actor = animation.entity();
@@ -65,8 +80,19 @@ class Main {
                 sequencer.animateLoop(actor, Actor.Walk(Direction.East)),
                 sequencer.range(100, 300, 1500, actor.x)
             ]),
-            sequencer.animateOnce(actor, Actor.Stand(Direction.East)),
-            sequencer.delay(500),
+            sequencer.untilAll([
+                sequencer.animateOnce(actor, Actor.Stand(Direction.East)),
+                sequencer.once([
+                    sequencer.delay( Math.floor(Math.random() * 200) + 200 ),
+                    sequencer.animateOnce(actor, Actor.Slouch(Direction.East)),
+                    sequencer.delay( 200 )
+                ]),
+                sequencer.once([
+                    sequencer.delay( Math.floor(Math.random() * 200) + 400 ),
+                    sequencer.animateOnce(actor, Actor.Crumple(Direction.East)),
+                    sequencer.delay( 200 )
+                ])
+            ]),
             sequencer.untilFirst([
                 sequencer.animateLoop(actor, Actor.Walk(Direction.West)),
                 sequencer.range(300, 100, 1500, actor.x)
