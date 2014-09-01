@@ -74,7 +74,6 @@ class FrameEnter {
     public function unpause() {
         if ( !isPaused ) return;
         timeSpentPaused = now() - pausedAt;
-        pausedAt = null;
         isPaused = false;
     }
 }

@@ -229,8 +229,8 @@ class Tiler<T: EnumValue> {
         var groups = new Map<T, { low: Int, high: Int }>();
 
         for ( group in rectangles.keys() ) {
-            var first: Int = null;
-            var mostRecent: Int = null;
+            var first: Null<Int> = null;
+            var mostRecent: Int;
             for ( rectangle in rectangles.get(group) ) {
                 mostRecent = sheet.addTileRect(rectangle);
                 if ( first == null ) {
