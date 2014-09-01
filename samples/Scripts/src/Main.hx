@@ -39,13 +39,16 @@ class Main {
         // A sequencer builds scriptable objects of different kinds
         var sequencer = new Sequencer(new FrameEnter(), new Defer());
 
-        // A Scriptable that changes the box to a random color
-        var changeColor = Call.build(function() {
+        // Randomly changes the color of the box
+        function changeColor() {
             entity.setColor( Math.floor( Math.random() * 0xffffff ) );
-        });
+        }
 
         var script = sequencer.loop([
-            sequencer.repeat(3, [ changeColor, sequencer.delay(250) ]),
+            sequencer.repeat(3, [
+                Call.build(changeColor),
+                sequencer.delay(250)
+            ]),
             sequencer.percent(500, function (percent) {
                 entity.setColor(0xffff00 + Math.round(percent * 255));
             }),
@@ -53,6 +56,9 @@ class Main {
                 sequencer.range(10, 100, 500, function (offset) {
                     entity.position( offset, offset);
                 }, Ease.quadInOut),
+                sequencer.interval(200, function (count, next) {
+                    count == 3 ? next() : changeColor();
+                }),
                 sequencer.range(100, 10, 1000, function (offset) {
                     entity.position( offset, offset );
                 }, Ease.elasticInOut)

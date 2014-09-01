@@ -3,6 +3,7 @@ package theatrics.script;
 import theatrics.script.EachFrame;
 import theatrics.script.Scriptable;
 import theatrics.script.Call;
+import theatrics.script.Interval;
 import theatrics.util.FrameEnter;
 import theatrics.util.Defer;
 import theatrics.util.Ease;
@@ -194,6 +195,14 @@ class Sequencer {
         return percent(ms, function(percent) {
             callback( from + Math.round(delta * percent) );
         }, easing);
+    }
+
+    /** Runs a function every few milliseconds*/
+    public function interval(
+        msInterval: Int,
+        callback: Int -> (Void -> Void) -> Void
+    ): Scriptable {
+        return new Interval(frames, msInterval, callback);
     }
 }
 
