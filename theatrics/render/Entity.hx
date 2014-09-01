@@ -2,6 +2,7 @@ package theatrics.render;
 
 import openfl.display.Sprite;
 import openfl.display.DisplayObject;
+import openfl.events.MouseEvent;
 
 /**
  * A renderable object
@@ -42,6 +43,14 @@ class SpriteEntity implements Entity {
         sprite.width = width;
         sprite.height = height;
         return this;
+    }
+
+    /** Hooks up a click event handler */
+    public function onClick(handler: MouseEvent -> Void): Void {
+        sprite.addEventListener("click", function ( event: Dynamic ) {
+            cast(event, MouseEvent);
+            handler(event);
+        });
     }
 }
 
