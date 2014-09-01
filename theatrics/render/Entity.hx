@@ -38,6 +38,18 @@ class SpriteEntity implements Entity {
         return this;
     }
 
+    /** Positions this entity */
+    public function x( x: Int ): SpriteEntity {
+        sprite.x = x;
+        return this;
+    }
+
+    /** Positions this entity */
+    public function y( y: Int ): SpriteEntity {
+        sprite.y = y;
+        return this;
+    }
+
     /** Changes the dimensions of this entity */
     public function dimensions( width: Int, height: Int ): SpriteEntity {
         sprite.width = width;
