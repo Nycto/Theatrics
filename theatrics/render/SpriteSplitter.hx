@@ -134,6 +134,12 @@ class SpriteSplitRowAdder<T> {
         this.splitter = splitter;
     }
 
+    /** Skips a row */
+    public function skipRow(): SpriteSplitRowAdder<T> {
+        rowOffset++;
+        return this;
+    }
+
     /** Adds a row and increments the internal row offset */
     public function addRow( group: T, count: Int ): SpriteSplitRowAdder<T> {
         var copy = prototype.clone();
