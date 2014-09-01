@@ -8,6 +8,7 @@ import theatrics.script.UntilFirst;
 import theatrics.util.FrameEnter;
 import theatrics.util.Defer;
 import theatrics.util.Ease;
+import theatrics.render.Animation;
 
 /**
  * A sequence execution session
@@ -209,6 +210,22 @@ class Sequencer {
     /** Starts a bunch of actions and waits for the first to finish */
     public function untilFirst( actions: Array<Scriptable> ): Scriptable {
         return new UntilFirst( actions );
+    }
+
+    /** Runs an animation one time through */
+    public function animateOnce<T: EnumValue>(
+        entity: AnimatedEntity<T>,
+        key: T
+    ): Scriptable {
+        return entity.once( frames, key );
+    }
+
+    /** Runs an animation one time through */
+    public function animateLoop<T: EnumValue>(
+        entity: AnimatedEntity<T>,
+        key: T
+    ): Scriptable {
+        return entity.loop( frames, key );
     }
 }
 

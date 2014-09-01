@@ -3,12 +3,16 @@ package theatrics.render;
 import openfl.display.DisplayObject;
 import openfl.display.BitmapData;
 import openfl.display.Bitmap;
+import openfl.display.Sprite;
 import openfl.geom.Rectangle;
 import openfl.geom.Point;
 
 import theatrics.geom.Dimensions;
 import theatrics.util.FrameEnter;
 import theatrics.render.Entity;
+import theatrics.script.Interval;
+import theatrics.script.Scriptable;
+import theatrics.script.Call;
 
 /**
  * All the data needed to create an animated sprite
@@ -62,134 +66,85 @@ class Animation<T: EnumValue> {
     }
 
     /** Creates a new entity */
-    public function entity( frameEnter: FrameEnter ): AnimatedEntity<T> {
-        return new AnimatedEntity<T>(this, frameEnter);
-    }
-}
-
-/**
- * Bundles up data about the currently displayed animation
- */
-class AnimationBehavior {
-
-    /** The current animation being displayed */
-    private var frames: Array<BitmapData>;
-
-    /** The frame being rendered */
-    private var frame: Int = 0;
-
-    /** Constructr */
-    private function new ( frames: Array<BitmapData> ) {
-        this.frames = frames;
-    }
-
-    /** Builds a map of behaviors from a map of frame arrays */
-    @:allow(theatrics.render.AnimatedEntity)
-    private static function build<T: EnumValue>(
-        input: Map<T, Array<BitmapData>>
-    ): Map<T, AnimationBehavior> {
-        var out = new Map<T, AnimationBehavior>();
-        for ( key in input.keys() ) {
-            out.set(key, new AnimationBehavior(input.get(key)));
-        }
-        return out;
-    }
-
-    /** Returns whether this behavior actually requires animation */
-    @:allow(theatrics.render.AnimatedEntity)
-    private inline function isAnimated(): Bool {
-        return frames.length != 1;
-    }
-
-    /** Starts animating this set of frames */
-    @:allow(theatrics.render.AnimatedEntity)
-    private inline function start( sprite: Bitmap ) {
-        frame = 0;
-        sprite.bitmapData = frames[0];
-    }
-
-    /** Displays the next frame */
-    @:allow(theatrics.render.AnimatedEntity)
-    private inline function next( sprite: Bitmap ) {
-        frame++;
-        if ( frame >= frames.length ) {
-            frame = 0;
-        }
-        sprite.bitmapData = frames[frame];
+    public function entity(): AnimatedEntity<T> {
+        return new AnimatedEntity<T>(this);
     }
 }
 
 /**
  * An animated entity
  */
-class AnimatedEntity<T: EnumValue> implements Entity {
+class AnimatedEntity<T: EnumValue> extends SpriteEntity {
 
     /** Maps a group identifier to a list of sprite rectangles */
-    private var behaviors: Map<T, AnimationBehavior>;
-
-    /** The number of milliseconds per frame */
-    private var speed: Int;
-
-    /** Lets you register a handler for the animations */
-    private var frameEnter: FrameEnter;
+    private var animation: Animation<T>;
 
     /** The underlying sprite associated with this entity */
-    private var sprite = new Bitmap();
-
-    /** Cancels the frame enter event handler */
-    private var cancel: Void -> Void = null;
-
-    /** The currently running animation */
-    private var running: AnimationBehavior;
-
-    /** The time at which to run the next frame */
-    private var nextFrameAt: Int;
+    private var bitmap = new Bitmap();
 
     /** Constructr */
-    public function new ( data: Animation<T>, frameEnter: FrameEnter ) {
-        this.behaviors = AnimationBehavior.build(data.frames);
-        this.speed = data.speed;
-        this.frameEnter = frameEnter;
+    public function new ( data: Animation<T> ) {
+        var sprite = new Sprite();
+        sprite.addChild( bitmap );
+        super(sprite);
+
+        this.animation = data;
     }
 
-    /** The sprite that represents entity */
-    public function getDisplayObject(): DisplayObject {
-        return sprite;
-    }
-
-    /** Cancels the animation if it is currently running */
-    public function stop(): AnimatedEntity<T> {
-        if ( cancel != null ) {
-            cancel();
-            cancel = null;
-        }
-        return this;
-    }
-
-    /** Shows a specific animation */
-    public function repeat( key: T ): Void {
-        running = behaviors.get(key);
-        if ( running == null ) {
+    /** Returns the frames for a specific animation */
+    private inline function getFrames( key: T ): Array<BitmapData> {
+        var frames = animation.frames.get(key);
+        if ( frames == null ) {
             throw "Animation is not defined: " + key;
         }
+        return frames;
+    }
 
-        running.start( sprite );
+    /** Returns a script for a single frame animation */
+    private function oneFrame( frame: BitmapData ): Scriptable {
+        return Call.build(function () {
+            bitmap.bitmapData = frame;
+        });
+    }
 
-        // For single frame animations, there really is no animation. Cancel
-        // the handler so we aren't spinning our wheels.
-        if ( !running.isAnimated() ) {
-            stop();
+    /** Runs a specific animation one time through */
+    public function once( frameEnter: FrameEnter, key: T ): Scriptable {
+        var frames = getFrames(key);
+
+        if ( frames.length == 1 ) {
+            return oneFrame( frames[0] );
         }
-        // If the event handler is already registered, we can just use
-        // the existing version.
-        else if ( cancel == null ) {
-            nextFrameAt = speed;
-            cancel = frameEnter.register(function(time, _) {
-                if ( time >= nextFrameAt ) {
-                    running.next( sprite );
-                    nextFrameAt = time + speed;
+        else {
+            return new Interval(
+                frameEnter,
+                animation.speed,
+                function(frame, done) {
+                    if ( frame >= frames.length ) {
+                        done();
+                    }
+                    else {
+                        bitmap.bitmapData = frames[frame];
+                    }
                 }
-            });
+            );
+        }
+    }
+
+    /** Runs a specific animation on loop */
+    public function loop( frameEnter: FrameEnter, key: T ): Scriptable {
+        var frames = getFrames(key);
+
+        if ( frames.length == 1 ) {
+            return oneFrame( frames[0] );
+        }
+        else {
+            return new Interval(
+                frameEnter,
+                animation.speed,
+                function(frame, _) {
+                    bitmap.bitmapData = frames[frame % frames.length];
+                }
+            );
         }
     }
 }
