@@ -4,6 +4,7 @@ import theatrics.script.EachFrame;
 import theatrics.script.Scriptable;
 import theatrics.script.Call;
 import theatrics.script.Interval;
+import theatrics.script.UntilFirst;
 import theatrics.util.FrameEnter;
 import theatrics.util.Defer;
 import theatrics.util.Ease;
@@ -203,6 +204,11 @@ class Sequencer {
         callback: Int -> (Void -> Void) -> Void
     ): Scriptable {
         return new Interval(frames, msInterval, callback);
+    }
+
+    /** Starts a bunch of actions and waits for the first to finish */
+    public function untilFirst( actions: Array<Scriptable> ): Scriptable {
+        return new UntilFirst( actions );
     }
 }
 
