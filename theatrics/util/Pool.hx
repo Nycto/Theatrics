@@ -3,16 +3,16 @@ package theatrics.util;
 /**
  * A pool of objects
  */
-class Pool<T> {
+class Pool<T, P> {
 
     /** The maximum number of objects to store */
     private var max: Int;
 
     /** The function for building new instances */
-    private var builder: Void -> T;
+    private var builder: P -> T;
 
     /** Takes an existing object and "re-instantiates" it */
-    private var reset: Null<T -> Void>;
+    private var reset: Null<T -> P -> Void>;
 
     /** The available objects */
     private var pool = new Array<T>();
@@ -20,8 +20,8 @@ class Pool<T> {
     /** Constructor */
     public function new (
         max: Int,
-        builder: Void -> T,
-        reset: T -> Void = null
+        builder: P -> T,
+        reset: T -> P -> Void = null
     ) {
         this.max = max;
         this.builder = builder;
@@ -29,16 +29,16 @@ class Pool<T> {
     }
 
     /** Gets a new object from the pool */
-    public function checkout(): T {
+    public function checkout( conf: P ): T {
         if ( pool.length > 0 ) {
             var obj = pool.pop();
             if ( reset != null ) {
-                reset(obj);
+                reset(obj, conf);
             }
             return obj;
         }
         else {
-            return builder();
+            return builder(conf);
         }
     }
 
