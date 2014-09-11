@@ -1,6 +1,6 @@
 
 .PHONY: build
-build: samples
+build: test samples
 
 .PHONY: samples/*
 samples/*:
@@ -12,6 +12,9 @@ samples/*:
 .PHONY: samples
 samples: $(wildcard samples/*)
 
+.PHONY: test
+test:
+	haxelib run munit test
+
 watch:
 	react $(shell git ls) -- make ${WATCH}
-

@@ -1,3 +1,6 @@
 /samples/*/bin
 /samples/*/project.xml.hxml
+/test/TestMain.hx
+/test/TestSuite.hx
+/build
 
