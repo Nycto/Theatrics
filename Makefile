@@ -16,5 +16,11 @@ samples: $(wildcard samples/*)
 test:
 	haxelib run munit test
 
+.PHONY: watch
 watch:
 	react $(shell git ls) -- make ${WATCH}
+
+.PHONY: browser
+browser: samples
+	google-chrome samples/*/bin/html5/bin/index.html
+
