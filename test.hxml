@@ -35,11 +35,15 @@
 
 ## Neko
 -main TestMain
+
 -lib munit
 -lib hamcrest
--cp theatrics
+-lib openfl
 
+-cp theatrics
+-cp /usr/lib/haxe/lib/openfl/2,0,1/backends/native
 -cp test
+
 -neko build/neko_test.n
 
 #--next
