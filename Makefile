@@ -14,7 +14,7 @@ samples: $(wildcard samples/*)
 
 .PHONY: test
 test:
-	haxelib run munit test
+	haxelib run munit test -result-exit-code
 
 .PHONY: watch
 watch:

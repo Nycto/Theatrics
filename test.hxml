@@ -42,6 +42,7 @@
 
 -cp theatrics
 -cp /usr/lib/haxe/lib/openfl/2,0,1/backends/native
+-cp ~/haxelib/openfl/2,0,1/backends/native
 -cp test
 
 -neko build/neko_test.n

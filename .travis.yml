@@ -11,6 +11,7 @@ before_install:
   - haxelib -notimeout install hxcpp
   - haxelib -notimeout install lime
   - haxelib -notimeout install lime-tools
+  - haxelib -notimeout install munit
   - haxelib dev theatrics $(pwd)
 
 script:
