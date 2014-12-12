@@ -1,39 +1,3 @@
-### Flash 9+
-#-main TestMain
-#-lib munit
-#-lib hamcrest
-#-cp theatrics
-#
-#-cp test
-#-swf-version 11
-#-swf build/as3_test.swf
-#
-#--next
-#
-### Flash 8
-#-main TestMain
-#-lib munit
-#-lib hamcrest
-#-cp theatrics
-#
-#-cp test
-#-swf-version 8
-#-swf build/as2_test.swf
-#
-#--next
-#
-### JavaScript
-#-main TestMain
-#-lib munit
-#-lib hamcrest
-#-cp theatrics
-#
-#-cp test
-#-js build/js_test.js
-#
-#--next
-
-## Neko
 -main TestMain
 
 -lib munit
@@ -45,18 +9,9 @@
 -cp ~/haxelib/openfl/2,0,1/backends/native
 -cp test
 
--neko build/neko_test.n
+-D HXCPP_M64
+-cpp build/cpp_test
 
-#--next
-#
-### CPP
-#-main TestMain
-#-lib munit
-#-lib hamcrest
-#-cp theatrics
-#
-#-cp test
-##-D HXCPP_M64
-#-cpp build/cpp_test
-
+# Builds for Neko are faster, but they tend to segfault
+#-neko build/neko_test.n
 
