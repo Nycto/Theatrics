@@ -7,14 +7,14 @@ samples/*:
 	@echo
 	@echo Building $@;
 	haxelib run openfl build $@/project.xml html5
-	haxelib run openfl build $@/project.xml linux
+	haxelib run openfl build $@/project.xml linux | tail -n 20
 
 .PHONY: samples
 samples: $(wildcard samples/*)
 
 .PHONY: test
 test:
-	haxelib run munit test -result-exit-code
+	haxelib run munit test -result-exit-code | tail -n 50
 
 .PHONY: watch
 watch:
