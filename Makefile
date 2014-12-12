@@ -24,3 +24,7 @@ watch:
 browser: samples
 	google-chrome samples/*/bin/html5/bin/index.html
 
+.PHONY: clean
+clean:
+	rm -rf build samples/*/bin
+
